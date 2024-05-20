@@ -20,7 +20,7 @@ namespace R2API.Utils
 namespace BossesDropItems
 {
     [BepInDependency("zombieseatflesh7.ArtifactOfPotential", BepInDependency.DependencyFlags.SoftDependency)]
-    [BepInPlugin("com.Moffein.BossesDropItems", "Bosses Drop Items", "1.3.1")]
+    [BepInPlugin("com.Moffein.BossesDropItems", "Bosses Drop Items", "1.3.2")]
     public class BossesDropItems : BaseUnityPlugin
     {
         public static float blankChance = 0f;
@@ -242,22 +242,14 @@ namespace BossesDropItems
                         }
                         if (!alreadyHasPickup) options[0].pickupIndex = originalIndex;
 
-                        GenericPickupController genericPickup = GenericPickupController.CreatePickup(new GenericPickupController.CreatePickupInfo
+                        PickupDropletController.CreatePickupDroplet(new GenericPickupController.CreatePickupInfo
                         {
-                            pickupIndex = PickupCatalog.FindPickupIndex(tier),
                             pickerOptions = options,
-                            rotation = Quaternion.identity,
                             prefabOverride = BossesDropItems.potentialPrefab,
                             position = victimBody.transform.position,
-
-                        });
-
-                        Rigidbody rigidBody = genericPickup.gameObject.GetComponent<Rigidbody>();
-                        if (rigidBody)
-                        {
-                            rigidBody.velocity = Vector3.up * 20f;
-                            rigidBody.AddTorque(UnityEngine.Random.Range(150f, 120f) * UnityEngine.Random.onUnitSphere);
-                        }
+                            rotation = Quaternion.identity,
+                            pickupIndex = PickupCatalog.FindPickupIndex(tier)
+                        }, new Vector3(UnityEngine.Random.Range(0f, randomOffset), 20f, UnityEngine.Random.Range(0f, randomOffset)));
                     }
                     else
                     {
