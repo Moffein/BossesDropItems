@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.Networking;
+using UnityEngine.UIElements;
 
 namespace R2API.Utils
 {
@@ -19,7 +20,7 @@ namespace R2API.Utils
 namespace BossesDropItems
 {
     [BepInDependency("zombieseatflesh7.ArtifactOfPotential", BepInDependency.DependencyFlags.SoftDependency)]
-    [BepInPlugin("com.Moffein.BossesDropItems", "Bosses Drop Items", "1.3.0")]
+    [BepInPlugin("com.Moffein.BossesDropItems", "Bosses Drop Items", "1.3.1")]
     public class BossesDropItems : BaseUnityPlugin
     {
         public static float blankChance = 0f;
@@ -241,13 +242,22 @@ namespace BossesDropItems
                         }
                         if (!alreadyHasPickup) options[0].pickupIndex = originalIndex;
 
-                        PickupDropletController.CreatePickupDroplet(new GenericPickupController.CreatePickupInfo
+                        GenericPickupController genericPickup = GenericPickupController.CreatePickup(new GenericPickupController.CreatePickupInfo
                         {
                             pickupIndex = PickupCatalog.FindPickupIndex(tier),
                             pickerOptions = options,
                             rotation = Quaternion.identity,
-                            prefabOverride = BossesDropItems.potentialPrefab
-                        }, victimBody.transform.position, Vector3.up * 20f);
+                            prefabOverride = BossesDropItems.potentialPrefab,
+                            position = victimBody.transform.position,
+
+                        });
+
+                        Rigidbody rigidBody = genericPickup.gameObject.GetComponent<Rigidbody>();
+                        if (rigidBody)
+                        {
+                            rigidBody.velocity = Vector3.up * 20f;
+                            rigidBody.AddTorque(UnityEngine.Random.Range(150f, 120f) * UnityEngine.Random.onUnitSphere);
+                        }
                     }
                     else
                     {
